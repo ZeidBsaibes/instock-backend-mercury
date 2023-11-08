@@ -13,8 +13,8 @@ app.get("/", (req, res) => {
   res.status(200).send("this is the / api endpoint ");
 });
 
-app.use("/warehouse", warehouseRoutes);
-app.use("/inventory", inventoryRoutes);
+app.use("/api/warehouses", warehouseRoutes);
+app.use("/api/inventories", inventoryRoutes);
 
 app.listen(PORT, () => {
   console.log(`running at http://localhost:${PORT}`);
