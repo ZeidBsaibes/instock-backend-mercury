@@ -10,9 +10,23 @@ const getAllWarehouses = async (_req, res) => {
 
 const getOneWarehouse = async (req, res) => {
   try {
-    res.status(200).send(`this is the route for a single warehouse`);
+    const warehouse = await knex("warehouses")
+      .where({ id: req.params.id })
+      .first();
+
+    if (!warehouse) {
+      return res.status(404).send({
+        message: `Warehouse with ID  ${req.params.id} not found`,
+      });
+    }
+
+    res.send(warehouse);
   } catch (error) {
-    console.error(error);
+    console.log(error);
+
+    res.status(500).send({
+      message: `Unable to retrieve warehouse data for the ID of ${req.params.id}`,
+    });
   }
 };
 
