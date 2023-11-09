@@ -1,4 +1,5 @@
 const knex = require("knex")(require("../knexfile"));
+const { validateWarehouse } = require("../scripts/utils/validate-warehouse");
 
 const getAllWarehouses = async (_req, res) => {
   try {
@@ -57,35 +58,12 @@ const updateWarehouse = async (req, res) => {
 
     //if warehouse exists then perform validation on request.body
 
-    const errors = [];
+    const errors = validateWarehouse(req.body);
 
-    if (!warehouse_name) {
-      errors.push({ message: "missing warehouse name" });
+    if (errors.length > 0) {
+      return res.status(400).send(errors);
     }
-    if (!address) {
-      errors.push({ message: "missing warehouse address" });
-    }
-    if (!city) {
-      errors.push({ message: "missing warehouse city" });
-    }
-    if (!country) {
-      errors.push({ message: "missing warehouse country" });
-    }
-    if (!contact_name) {
-      errors.push({ message: "missing warehouse contact name" });
-    }
-    if (!contact_position) {
-      errors.push({ message: "missing warehouse contact position" });
-    }
-    if (!contact_phone) {
-      errors.push({ message: "missing warehouse contact phone" });
-    }
-    if (!contact_phone) {
-      errors.push({ message: "missing warehouse contact phone" });
-    }
-    if (!contact_email) {
-      errors.push({ message: "missing warehouse contact email" });
-    }
+
     if (errors.length > 0) {
       return res.status(400).send(errors);
     }
@@ -104,30 +82,12 @@ const updateWarehouse = async (req, res) => {
 };
 
 const newWarehouse = async (req, res) => {
-  const {
-    warehouse_name,
-    address,
-    city,
-    country,
-    contact_name,
-    contact_poisiton,
-    contact_phone,
-    contact_email,
-  } = req.body;
+  // perform validation on new warehouse object
 
-  if (
-    (!warehouse_name,
-    !address,
-    !city,
-    !country,
-    !contact_name,
-    !contact_poisiton,
-    !contact_phone,
-    !contact_email)
-  ) {
-    return res.status(400).json({
-      message: "Please ensure that there are no missing properties",
-    });
+  const errors = validateWarehouse(req.body);
+
+  if (errors.length > 0) {
+    return res.status(400).send(errors);
   }
 
   const newWarehouse = {
