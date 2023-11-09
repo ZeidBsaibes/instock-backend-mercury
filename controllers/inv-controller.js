@@ -14,7 +14,28 @@ const getAllInventories = async (req, res) => {
 
 const getInventoryById = async (req, res) => {
   try {
-    res.status(200).send("this is the route for a specific inventory item");
+    const data = await knex("inventories")
+      .join("warehouses", "warehouses.id", "inventories.warehouse_id")
+      .select(
+        "inventories.id",
+        "inventories.warehouse_id",
+        "warehouses.warehouse_name",
+        "inventories.item_name",
+        "inventories.description",
+        "inventories.category",
+        "inventories.status",
+        "inventories.quantity",
+        "inventories.created_at",
+        "inventories.updated_at"
+      )
+      .where("inventories.id", req.params.id)
+      .first();
+    if (!data) {
+      return res
+        .status(404)
+        .send("Inventory item does not exist, check inventory number");
+    }
+    res.status(200).json(data);
   } catch (error) {
     console.error(error);
   }
