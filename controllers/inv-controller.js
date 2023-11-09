@@ -83,11 +83,6 @@ const createInventoryItem = async (req, res) => {
       .send("Check for missing properties in request body:");
   }
 
-  // const eligibleWarehouses = await knex("warehouses")
-  //   .select("id")
-  //   .where(eligibleWarehouses.id === newInventoryItem.warehouse_id);
-  // console.log(eligibleWarehouses);
-
   const checkExist = await knex("warehouses")
     .where({ id: warehouse_id })
     .first();
@@ -106,8 +101,9 @@ const createInventoryItem = async (req, res) => {
     if (res.status === 400) {
       return res.status(404).send("Other error");
     }
-    const 
-    res.status(201).send("You have successfully created a new inventory item");
+    const result = await knex("inventories").insert(newInventoryItem);
+
+    res.status(201).send(newInventoryItem);
   } catch (error) {
     console.error(error);
   }
