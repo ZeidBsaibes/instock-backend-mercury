@@ -2,9 +2,11 @@ const knex = require("knex")(require("../knexfile"));
 
 const getAllWarehouses = async (_req, res) => {
   try {
-    res.status(200).send("this is the route for all warehouses");
+    const warehouses = await knex("warehouses");
+
+    return res.status(200).send(warehouses);
   } catch (error) {
-    console.error(error);
+    console.error("Database error:", error);
   }
 };
 
