@@ -113,9 +113,27 @@ const newWarehouse = async (req, res) => {
 
 const deleteWarehouse = async (req, res) => {
   try {
-    res.status(200).send(`this is the route to delete a warehouse`);
+    const warehouse = await knex("warehouses")
+      .where({ id: req.params.id })
+      .first();
+
+    if (!warehouse) {
+      return res.status(404).send({
+        message: `Warehouse with ID ${req.params.id} not found`,
+      });
+    }
+
+    await knex("warehouses").where({ id: req.params.id }).del();
+
+    res.status(204).send({
+      message: `Warehouse with ID ${req.params.id} has been deleted successfully`,
+    });
   } catch (error) {
     console.error(error);
+
+    res.status(500).send({
+      message: `Unable to delete warehouse with ID ${req.params.id}`,
+    });
   }
 };
 
