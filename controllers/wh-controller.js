@@ -104,10 +104,53 @@ const updateWarehouse = async (req, res) => {
 };
 
 const newWarehouse = async (req, res) => {
+  const {
+    warehouse_name,
+    address,
+    city,
+    country,
+    contact_name,
+    contact_poisiton,
+    contact_phone,
+    contact_email,
+  } = req.body;
+
+  if (
+    (!warehouse_name,
+    !address,
+    !city,
+    !country,
+    !contact_name,
+    !contact_poisiton,
+    !contact_phone,
+    !contact_email)
+  ) {
+    return res.status(400).json({
+      message: "Please ensure that there are no missing properties",
+    });
+  }
+
+  const newWarehouse = {
+    warehouse_name: req.body.warehouse_name,
+    address: req.body.address,
+    city: req.body.city,
+    country: req.body.country,
+    contact_name: req.body.contact_name,
+    contact_position: req.body.contact_position,
+    contact_phone: req.body.contact_phone,
+    contact_email: req.body.contact_email,
+  };
+
   try {
-    res.status(200).send("this is the route for a new warehouse");
+    const result = await knex("warehouses").insert(newWarehouse);
+    const createdWarehouse = await knex("warehouses")
+      .where({ id: result[0] })
+      .first();
+    res.status(201).send(createdWarehouse);
   } catch (error) {
-    console.error(error);
+    res.status(500).json({
+      message: `Cannot create new warehouse: ${error}`,
+    });
   }
 };
 
