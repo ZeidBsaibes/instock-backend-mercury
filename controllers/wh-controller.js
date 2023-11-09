@@ -182,9 +182,16 @@ const deleteWarehouse = async (req, res) => {
 
 const getInventoryInWarehouse = async (req, res) => {
   try {
-    res
-      .status(200)
-      .send("this is the route to get inventory at a specific warehouse");
+    const { id: warehouse_id } = req.params.id;
+    const inventoryInWarehouse = await knex("inventories")
+      .select("id", "item_name", "category", "status", "quantity")
+      .where({ warehouse_id: req.params.id });
+    if (!warehouse_id) {
+      return res
+        .status(404)
+        .send("Warehouse does not exist, check warehouse number");
+    }
+    res.status(200).send(inventoryInWarehouse);
   } catch (error) {
     console.error(error);
   }
