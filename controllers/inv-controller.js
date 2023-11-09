@@ -69,6 +69,19 @@ const createInventoryItem = async (req, res) => {
 
 const updateInventoryItem = async (req, res) => {
   try {
+    // console.log(req.body);
+
+    // first check that proposed warehouse exists
+
+    const requestWarehouse = req.body.warehouse_id;
+    console.log(requestWarehouse);
+    const checkWarehouseExists = await knex("warehouses")
+      .where({ id: requestWarehouse })
+      .first();
+    if (!checkWarehouseExists) {
+      res.status(404).send({ message: "warehouse does not exist" });
+    }
+
     res.status(200).send("this is the route to update an inventory item");
   } catch (error) {}
 };
