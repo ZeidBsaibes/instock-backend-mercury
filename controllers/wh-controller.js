@@ -45,17 +45,6 @@ const updateWarehouse = async (req, res) => {
         .send({ message: `warehouse with id ${req.params.id} not found` });
     }
 
-    const {
-      warehouse_name,
-      address,
-      city,
-      country,
-      contact_name,
-      contact_position,
-      contact_phone,
-      contact_email,
-    } = req.body;
-
     //if warehouse exists then perform validation on request.body
 
     const errors = validateWarehouse(req.body);
@@ -70,8 +59,7 @@ const updateWarehouse = async (req, res) => {
     // insert updated warehouse into database
     await knex("warehouses").where({ id: req.params.id }).update(req.body);
 
-    // request and return updated warehouse
-
+    // request db update and return updated warehouse
     const editedWarehouse = await knex("warehouses")
       .where({ id: req.params.id })
       .first();
@@ -83,7 +71,6 @@ const updateWarehouse = async (req, res) => {
 
 const newWarehouse = async (req, res) => {
   // perform validation on new warehouse object
-
   const errors = validateWarehouse(req.body);
 
   if (errors.length > 0) {
