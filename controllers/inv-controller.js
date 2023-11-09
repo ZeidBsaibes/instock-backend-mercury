@@ -4,7 +4,21 @@ const knex = require("knex")(require("../knexfile"));
 
 const getAllInventories = async (req, res) => {
   try {
-    res.status(200).send("this is the route for all inventory items");
+    const data = await knex("inventories")
+      .join("warehouses", "warehouses.id", "inventories.warehouse_id")
+      .select(
+        "inventories.id",
+        "inventories.warehouse_id",
+        "warehouses.warehouse_name",
+        "inventories.item_name",
+        "inventories.description",
+        "inventories.category",
+        "inventories.status",
+        "inventories.quantity",
+        "inventories.created_at",
+        "inventories.updated_at"
+      );
+    res.status(200).json(data);
   } catch (error) {
     console.error(error);
   }
