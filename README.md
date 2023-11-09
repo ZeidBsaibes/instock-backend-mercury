@@ -3,6 +3,7 @@ Setup
 npm install
 
 create a .env file based on env.sample
+-copy and paste the .env.sample and rename it to .env
 
 to make the database
 
