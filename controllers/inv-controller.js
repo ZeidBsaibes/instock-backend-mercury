@@ -1,4 +1,7 @@
 const knex = require("knex")(require("../knexfile"));
+const {
+  validateInventory,
+} = require("../scripts/utils/validate-inventory-item");
 
 // get all inventory items
 
@@ -113,7 +116,42 @@ const createInventoryItem = async (req, res) => {
 
 const updateInventoryItem = async (req, res) => {
   try {
-    res.status(200).send("this is the route to update an inventory item");
+    // first check inventory item exists
+    const checkExists = await knex("inventories")
+      .where({ id: req.params.id })
+      .first();
+    if (!checkExists) {
+      return res
+        .status(404)
+        .send({ message: `inventory item with id ${req.params.id} not found` });
+    }
+    // then check that proposed warehouse exists
+    const requestWarehouse = req.body.warehouse_id;
+    const checkWarehouseExists = await knex("warehouses")
+      .where({ id: requestWarehouse })
+      .first();
+    if (!checkWarehouseExists) {
+      return res.status(404).send({
+        message: `warehouse with id: ${requestWarehouse} does not exist`,
+      });
+    }
+
+    //if inventory item exists and warehouse exists then validate body
+
+    const errors = validateInventory(req.body);
+    console.log(req.body.quantity);
+
+    if (errors.length > 0) {
+      return res.status(400).send(errors);
+    }
+
+    await knex("inventories").where({ id: req.params.id }).update(req.body);
+
+    const editedInventory = await knex("inventories")
+      .where({ id: req.params.id })
+      .first();
+
+    return res.status(200).send(editedInventory);
   } catch (error) {}
 };
 
