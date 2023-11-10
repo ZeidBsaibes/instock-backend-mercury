@@ -24,6 +24,10 @@ const validateInventory = (requestBody) => {
         "Allowed categories are Electronics, Gear, Apparel, Accessories, Health",
     });
   }
+  if (Number(quantity) > 1000000) {
+    errors.push({ message: "quantity is too large" });
+  }
+
   if (isNaN(Number(quantity))) {
     errors.push({ message: "quantity must be a number or a numeric string" });
   }
