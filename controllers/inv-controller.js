@@ -73,18 +73,19 @@ const createInventoryItem = async (req, res) => {
     quantity: quantity,
   };
 
-  if (
-    !warehouse_id ||
-    !item_name ||
-    !description ||
-    !category ||
-    !status ||
-    !quantity
-  ) {
-    return res
-      .status(400)
-      .send("Check for missing properties in request body:");
-  }
+  // if (
+  //   !warehouse_id ||
+  //   !item_name ||
+  //   !description ||
+  //   !category ||
+  //   !status ||
+  //   !quantity
+  // ) {
+  //   return res
+  //     .status(400)
+  //     .send("Check for missing properties in request body:");
+  // }
+  // First check that warehouse exists
 
   const checkExist = await knex("warehouses")
     .where({ id: warehouse_id })
@@ -96,9 +97,17 @@ const createInventoryItem = async (req, res) => {
       .send({ message: `warehouse with id ${req.body.id} not found` });
   }
 
-  if (typeof quantity !== "number") {
-    return res.status(400).send("The quantity is the wrong data type:");
+  // Then validate new inventory object
+
+  const errors = validateInventory(req.body);
+
+  if (errors.length > 0) {
+    return res.status(400).send(errors);
   }
+
+  // if (typeof quantity !== "number") {
+  //   return res.status(400).send("The quantity is the wrong data type:");
+  // }
 
   try {
     if (res.status === 400) {
@@ -139,7 +148,6 @@ const updateInventoryItem = async (req, res) => {
     //if inventory item exists and warehouse exists then validate body
 
     const errors = validateInventory(req.body);
-    console.log(req.body.quantity);
 
     if (errors.length > 0) {
       return res.status(400).send(errors);
