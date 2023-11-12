@@ -25,7 +25,7 @@ const getOneWarehouse = async (req, res) => {
 
     res.send(warehouse);
   } catch (error) {
-    console.log(error);
+    console.error(error);
 
     res.status(500).send({
       message: `Unable to retrieve warehouse data for the ID of ${req.params.id}`,
